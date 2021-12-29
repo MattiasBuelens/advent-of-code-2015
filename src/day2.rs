@@ -32,6 +32,15 @@ impl Present {
         let [l, w, h] = sides;
         3 * l * w + 2 * w * h + 2 * h * l
     }
+
+    fn ribbon(&self) -> u32 {
+        let mut sides = [self.l, self.w, self.h];
+        sides.sort();
+        let [l, w, h] = sides;
+        let shortest_perimeter = 2 * l + 2 * w;
+        let bow = l * w * h;
+        shortest_perimeter + bow
+    }
 }
 
 #[aoc(day2, part1)]
@@ -41,7 +50,7 @@ pub fn part1(input: &[Present]) -> u32 {
 
 #[aoc(day2, part2)]
 pub fn part2(input: &[Present]) -> u32 {
-    todo!()
+    input.iter().map(|present| present.ribbon()).sum()
 }
 
 #[cfg(test)]
@@ -54,5 +63,13 @@ mod tests {
         assert_eq!(part1(&input), 58);
         let input = input_generator("1x1x10");
         assert_eq!(part1(&input), 43);
+    }
+
+    #[test]
+    fn test_part2() {
+        let input = input_generator("2x3x4");
+        assert_eq!(part2(&input), 34);
+        let input = input_generator("1x1x10");
+        assert_eq!(part2(&input), 14);
     }
 }
