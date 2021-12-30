@@ -31,7 +31,7 @@ fn to_link_map(links: &[Link]) -> LinkMap {
     map
 }
 
-fn solve(prefix: Vec<String>, link_map: &LinkMap) -> (Vec<String>, u32) {
+fn solve(prefix: Vec<String>, link_map: &LinkMap, longest: bool) -> (Vec<String>, u32) {
     let mut best = None;
     let next_links = match prefix.last() {
         Some(last) => {
@@ -49,10 +49,13 @@ fn solve(prefix: Vec<String>, link_map: &LinkMap) -> (Vec<String>, u32) {
         }
         let mut path = prefix.clone();
         path.push(next.clone());
-        let (next_path, next_distance) = solve(path, link_map);
+        let (next_path, next_distance) = solve(path, link_map, longest);
         let next_distance = distance + next_distance;
         best = match best {
-            Some((old_path, old_distance)) if next_distance >= old_distance => {
+            Some((old_path, old_distance))
+                if (!longest && next_distance >= old_distance)
+                    || (longest && next_distance <= old_distance) =>
+            {
                 Some((old_path, old_distance))
             }
             _ => Some((next_path, next_distance)),
@@ -64,13 +67,15 @@ fn solve(prefix: Vec<String>, link_map: &LinkMap) -> (Vec<String>, u32) {
 #[aoc(day9, part1)]
 pub fn part1(links: &[Link]) -> u32 {
     let link_map = to_link_map(links);
-    let (_, distance) = solve(vec![], &link_map);
+    let (_, distance) = solve(vec![], &link_map, false);
     distance
 }
 
 #[aoc(day9, part2)]
-pub fn part2(links: &[Link]) -> i32 {
-    todo!()
+pub fn part2(links: &[Link]) -> u32 {
+    let link_map = to_link_map(links);
+    let (_, distance) = solve(vec![], &link_map, true);
+    distance
 }
 
 #[cfg(test)]
@@ -91,5 +96,11 @@ Dublin to Belfast = 141"
     fn test_part1() {
         let input = input_generator(&TEST_INPUT);
         assert_eq!(part1(&input), 605);
+    }
+
+    #[test]
+    fn test_part2() {
+        let input = input_generator(&TEST_INPUT);
+        assert_eq!(part2(&input), 982);
     }
 }
