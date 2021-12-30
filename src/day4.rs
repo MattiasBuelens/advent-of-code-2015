@@ -21,10 +21,7 @@ pub fn part1(secret: &str) -> i32 {
 }
 
 fn starts_with_five_zeros(digest: &[u8; 16]) -> bool {
-    match digest {
-        [0, 0, x, ..] if *x < 0x10 => true,
-        _ => false,
-    }
+    matches!(digest, [0, 0, x, ..] if *x < 0x10)
 }
 
 #[aoc(day4, part2)]
@@ -33,10 +30,7 @@ pub fn part2(secret: &str) -> i32 {
 }
 
 fn starts_with_six_zeros(digest: &[u8; 16]) -> bool {
-    match digest {
-        [0, 0, 0, ..] => true,
-        _ => false,
-    }
+    matches!(digest, [0, 0, 0, ..])
 }
 
 #[cfg(test)]

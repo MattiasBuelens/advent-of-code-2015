@@ -52,7 +52,7 @@ pub fn part2(input: &[Direction]) -> usize {
     let mut santa = Vector2D::zero();
     let mut robo_santa = Vector2D::zero();
     visited.insert(santa);
-    let mut directions = input.into_iter();
+    let mut directions = input.iter();
     loop {
         if let Some(dir) = directions.next() {
             santa += dir.step();

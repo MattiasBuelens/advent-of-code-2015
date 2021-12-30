@@ -98,7 +98,7 @@ impl Circuit {
             Gate::LeftShift(input, shift) => self.compute_input(input) << shift,
             Gate::RightShift(input, shift) => self.compute_input(input) >> shift,
         };
-        self.cache.insert(wire.to_string(), value);
+        self.cache.insert(wire, value);
         value
     }
 

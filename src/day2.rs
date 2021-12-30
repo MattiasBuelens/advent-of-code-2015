@@ -28,14 +28,14 @@ pub fn input_generator(input: &str) -> Vec<Present> {
 impl Present {
     fn area(&self) -> u32 {
         let mut sides = [self.l, self.w, self.h];
-        sides.sort();
+        sides.sort_unstable();
         let [l, w, h] = sides;
         3 * l * w + 2 * w * h + 2 * h * l
     }
 
     fn ribbon(&self) -> u32 {
         let mut sides = [self.l, self.w, self.h];
-        sides.sort();
+        sides.sort_unstable();
         let [l, w, h] = sides;
         let shortest_perimeter = 2 * l + 2 * w;
         let bow = l * w * h;
