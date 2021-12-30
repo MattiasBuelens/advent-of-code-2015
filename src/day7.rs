@@ -117,8 +117,26 @@ pub fn part1(input: &[Connection]) -> u16 {
 }
 
 #[aoc(day7, part2)]
-pub fn part2(input: &[Connection]) -> i32 {
-    todo!()
+pub fn part2(input: &[Connection]) -> u16 {
+    let a_value = part1(input);
+
+    let mut connections = input.to_vec();
+    // Remove the original connection to wire "b", and replace it with a new connection
+    // that puts the previously computed value of "a" directly onto wire "b".
+    connections.remove(
+        connections
+            .iter()
+            .position(|connection| connection.1 == "b")
+            .unwrap(),
+    );
+    connections.push(Connection(
+        Gate::Forward(Input::Value(a_value)),
+        "b".to_string(),
+    ));
+
+    // Compute with the new connections
+    let mut circuit = Circuit::new(connections);
+    circuit.compute_wire("a".to_string())
 }
 
 #[cfg(test)]
