@@ -16,7 +16,7 @@ impl FromStr for Relation {
         let (s, last) = s
             .split_once(" happiness units by sitting next to ")
             .unwrap();
-        let second = last.strip_suffix(".").unwrap();
+        let second = last.strip_suffix('.').unwrap();
         if let Some(gain) = s.strip_prefix("gain ") {
             let gain = gain.parse::<i32>().unwrap();
             Ok(Relation(first.to_string(), second.to_string(), gain))
@@ -53,7 +53,7 @@ fn compute_happiness(arrangement: &[String], relations: &[Relation]) -> i32 {
     total
 }
 
-fn get_relation_happiness(person: &String, other: &String, relations: &[Relation]) -> i32 {
+fn get_relation_happiness(person: &str, other: &str, relations: &[Relation]) -> i32 {
     relations
         .iter()
         .find(|Relation(first, second, _)| first == person && other == second)
