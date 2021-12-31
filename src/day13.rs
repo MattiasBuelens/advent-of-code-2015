@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use itertools::Itertools;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Relation(String, String, i32);
 
 impl FromStr for Relation {
@@ -78,7 +78,17 @@ pub fn part1(relations: &[Relation]) -> i32 {
 
 #[aoc(day13, part2)]
 pub fn part2(relations: &[Relation]) -> i32 {
-    todo!()
+    let people = relations
+        .iter()
+        .map(|Relation(first, _, _)| first.clone())
+        .unique()
+        .collect::<Vec<_>>();
+    let mut relations = relations.to_vec();
+    for person in people {
+        relations.push(Relation("you".to_string(), person.clone(), 0));
+        relations.push(Relation(person.clone(), "you".to_string(), 0));
+    }
+    part1(&relations)
 }
 
 #[cfg(test)]
