@@ -43,6 +43,7 @@ pub fn input_generator(input: &str) -> Vec<Ingredient> {
 }
 
 type Selection<'a> = Vec<(&'a Ingredient, u32)>;
+type SelectionRef<'a> = &'a [(&'a Ingredient, u32)];
 
 fn select_ingredients(
     ingredients: &[Ingredient],
@@ -90,9 +91,20 @@ pub fn part1(input: &[Ingredient]) -> i64 {
         .unwrap()
 }
 
+fn calorie_count(selection: SelectionRef) -> i64 {
+    selection
+        .iter()
+        .map(|(ingredient, amount)| ingredient.calories as i64 * *amount as i64)
+        .sum()
+}
+
 #[aoc(day15, part2)]
-pub fn part2(input: &[Ingredient]) -> i32 {
-    todo!()
+pub fn part2(input: &[Ingredient]) -> i64 {
+    select_ingredients(input, 100)
+        .filter(|selection| calorie_count(selection) == 500)
+        .map(cookie_score)
+        .max()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -117,6 +129,6 @@ Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"
     #[test]
     fn test_part2() {
         let input = input_generator(&TEST_INPUT);
-        assert_eq!(part2(&input), 0);
+        assert_eq!(part2(&input), 57600000);
     }
 }
