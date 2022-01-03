@@ -40,8 +40,8 @@ pub fn part1((replacements, molecule): &Input) -> usize {
     calibrate(replacements, molecule)
 }
 
-fn build_molecule(replacements: &[(String, String)], molecule: &str) -> Option<usize> {
-    if molecule == "e" {
+fn build_molecule(replacements: &[(String, String)], molecule: String) -> Option<usize> {
+    if &molecule == "e" {
         return Some(0);
     }
     // Try all possible replacements in all possible positions.
@@ -50,7 +50,7 @@ fn build_molecule(replacements: &[(String, String)], molecule: &str) -> Option<u
         .iter()
         .flat_map(|(input, output)| {
             molecule.match_indices(output).map(|(i, m)| {
-                let mut input_molecule = molecule.to_string();
+                let mut input_molecule = molecule.clone();
                 input_molecule.replace_range(i..(i + m.len()), input);
                 input_molecule
             })
@@ -64,7 +64,7 @@ fn build_molecule(replacements: &[(String, String)], molecule: &str) -> Option<u
     // reduced in fewer steps than longer molecules.
     reduced_molecules
         .into_iter()
-        .filter_map(|reduced| build_molecule(replacements, &reduced))
+        .filter_map(|reduced| build_molecule(replacements, reduced))
         .next()
         // Add one for the extra replacement.
         .map(|x| x + 1)
@@ -72,7 +72,7 @@ fn build_molecule(replacements: &[(String, String)], molecule: &str) -> Option<u
 
 #[aoc(day19, part2)]
 pub fn part2((replacements, molecule): &Input) -> usize {
-    build_molecule(replacements, molecule).unwrap()
+    build_molecule(replacements, molecule.to_string()).unwrap()
 }
 
 #[cfg(test)]
@@ -106,7 +106,7 @@ O => HH"
     #[test]
     fn test_part2() {
         let replacements = parse_replacements(&REPLACEMENTS_2);
-        assert_eq!(build_molecule(&replacements, "HOH"), Some(3));
-        assert_eq!(build_molecule(&replacements, "HOHOHO"), Some(6));
+        assert_eq!(build_molecule(&replacements, "HOH".to_string()), Some(3));
+        assert_eq!(build_molecule(&replacements, "HOHOHO".to_string()), Some(6));
     }
 }
