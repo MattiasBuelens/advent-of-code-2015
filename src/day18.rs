@@ -23,11 +23,15 @@ pub fn input_generator(input: &str) -> Grid {
 }
 
 impl Grid {
-    fn step(&self) -> Self {
+    fn step(&self, part2: bool) -> Self {
         let mut next = self.clone();
         for y in 0..self.height {
             for x in 0..self.width {
                 let cell = &mut next.cells[y][x];
+                if part2 && self.is_stuck(x, y) {
+                    assert!(*cell);
+                    continue;
+                }
                 let neighbours = Vector2D::new(x as i32, y as i32)
                     .neighbours_diagonal()
                     .filter(|pos| {
@@ -57,23 +61,37 @@ impl Grid {
             .map(|row| row.iter().filter(|cell| **cell).count())
             .sum()
     }
+
+    fn is_stuck(&self, x: usize, y: usize) -> bool {
+        [0, self.width - 1].contains(&x) && [0, self.height - 1].contains(&y)
+    }
+
+    fn make_stuck(&mut self) {
+        for y in [0, self.width - 1] {
+            for x in [0, self.height - 1] {
+                self.cells[y][x] = true;
+            }
+        }
+    }
 }
 
-fn simulate(mut grid: Grid, steps: usize) -> Grid {
+fn simulate(mut grid: Grid, steps: usize, part2: bool) -> Grid {
     for _ in 0..steps {
-        grid = grid.step();
+        grid = grid.step(part2);
     }
     grid
 }
 
 #[aoc(day18, part1)]
 pub fn part1(input: &Grid) -> usize {
-    simulate(input.clone(), 100).count_on()
+    simulate(input.clone(), 100, false).count_on()
 }
 
 #[aoc(day18, part2)]
-pub fn part2(input: &Grid) -> i32 {
-    todo!()
+pub fn part2(input: &Grid) -> usize {
+    let mut grid = input.clone();
+    grid.make_stuck();
+    simulate(grid, 100, true).count_on()
 }
 
 #[cfg(test)]
@@ -95,7 +113,14 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let input = input_generator(&TEST_INPUT);
-        assert_eq!(simulate(input, 4).count_on(), 4);
+        let grid = input_generator(&TEST_INPUT);
+        assert_eq!(simulate(grid, 4, false).count_on(), 4);
+    }
+
+    #[test]
+    fn test_part2() {
+        let mut grid = input_generator(&TEST_INPUT);
+        grid.make_stuck();
+        assert_eq!(simulate(grid, 5, true).count_on(), 17);
     }
 }
