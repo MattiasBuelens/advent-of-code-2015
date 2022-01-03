@@ -21,8 +21,7 @@ pub fn input_generator(input: &str) -> Input {
     (replacements, molecule)
 }
 
-#[aoc(day19, part1)]
-pub fn part1((replacements, molecule): &Input) -> usize {
+fn calibrate(replacements: &[(String, String)], molecule: &str) -> usize {
     let results = replacements
         .iter()
         .flat_map(|(input, output)| {
@@ -34,6 +33,11 @@ pub fn part1((replacements, molecule): &Input) -> usize {
         })
         .collect::<HashSet<_>>();
     results.len()
+}
+
+#[aoc(day19, part1)]
+pub fn part1((replacements, molecule): &Input) -> usize {
+    calibrate(replacements, molecule)
 }
 
 #[aoc(day19, part2)]
@@ -58,7 +62,7 @@ O => HH"
     #[test]
     fn test_part1() {
         let replacements = parse_replacements(&TEST_INPUT);
-        assert_eq!(part1(&(replacements.clone(), "HOH".to_string())), 4);
-        assert_eq!(part1(&(replacements, "HOHOHO".to_string())), 7);
+        assert_eq!(calibrate(&replacements, "HOH"), 4);
+        assert_eq!(calibrate(&replacements, "HOHOHO"), 7);
     }
 }
