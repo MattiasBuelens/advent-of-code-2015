@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 pub type Replacements = Vec<(String, String)>;
 pub type Input = (Replacements, String);
@@ -27,7 +27,7 @@ fn calibrate(replacements: &[(String, String)], molecule: &str) -> usize {
         .flat_map(|(input, output)| {
             molecule.match_indices(input).map(move |(i, m)| {
                 let mut result = molecule.to_string();
-                result.replace_range(i..(i + m.len()), &output);
+                result.replace_range(i..(i + m.len()), output);
                 result
             })
         })
@@ -40,9 +40,49 @@ pub fn part1((replacements, molecule): &Input) -> usize {
     calibrate(replacements, molecule)
 }
 
+fn build_molecule(
+    replacements: &[(String, String)],
+    molecule: &str,
+    cache: &mut HashMap<String, Option<usize>>,
+) -> Option<usize> {
+    if molecule == "e" {
+        return Some(0);
+    }
+    if let Some(&cached_result) = cache.get(molecule) {
+        return cached_result;
+    }
+    // Try all possible replacements in all possible positions.
+    // Work backwards: replace the output with the input.
+    let mut reduced_molecules = replacements
+        .iter()
+        .flat_map(|(input, output)| {
+            molecule.match_indices(output).map(|(i, m)| {
+                let mut input_molecule = molecule.to_string();
+                input_molecule.replace_range(i..(i + m.len()), input);
+                input_molecule
+            })
+        })
+        .collect::<Vec<_>>();
+    // Try the *shortest* resulting molecule first.
+    reduced_molecules.sort_unstable_by_key(|x| x.len());
+    // Find the first molecule that can be reduced completely.
+    // Theoretically speaking, there may be a longer molecule that can be reduced in fewer steps.
+    // However, the replacements in the input are such that shorter molecules can *always* be
+    // reduced in fewer steps than longer molecules.
+    let result = reduced_molecules
+        .iter()
+        .filter_map(|reduced| build_molecule(replacements, reduced, cache))
+        .next();
+    // Add one for the extra replacement.
+    let result = result.map(|x| x + 1);
+    // Cache result for future iterations.
+    cache.insert(molecule.to_string(), result);
+    result
+}
+
 #[aoc(day19, part2)]
-pub fn part2((replacements, molecule): &Input) -> i32 {
-    todo!()
+pub fn part2((replacements, molecule): &Input) -> usize {
+    build_molecule(replacements, molecule, &mut HashMap::new()).unwrap()
 }
 
 #[cfg(test)]
@@ -52,7 +92,14 @@ mod tests {
     use super::*;
 
     lazy_static! {
-        static ref TEST_INPUT: &'static str = r"
+        static ref REPLACEMENTS_1: &'static str = r"
+H => HO
+H => OH
+O => HH"
+            .trim();
+        static ref REPLACEMENTS_2: &'static str = r"
+e => H
+e => O
 H => HO
 H => OH
 O => HH"
@@ -61,8 +108,21 @@ O => HH"
 
     #[test]
     fn test_part1() {
-        let replacements = parse_replacements(&TEST_INPUT);
+        let replacements = parse_replacements(&REPLACEMENTS_1);
         assert_eq!(calibrate(&replacements, "HOH"), 4);
         assert_eq!(calibrate(&replacements, "HOHOHO"), 7);
+    }
+
+    #[test]
+    fn test_part2() {
+        let replacements = parse_replacements(&REPLACEMENTS_2);
+        assert_eq!(
+            build_molecule(&replacements, "HOH", &mut HashMap::new()),
+            Some(3)
+        );
+        assert_eq!(
+            build_molecule(&replacements, "HOHOHO", &mut HashMap::new()),
+            Some(6)
+        );
     }
 }
