@@ -235,7 +235,7 @@ impl PartialOrd for Game {
     }
 }
 
-fn solve(game: Game) -> Option<Game> {
+fn solve(game: Game, part2: bool) -> Option<Game> {
     let mut queue = BinaryHeap::<Game>::new();
     queue.push(game);
     while let Some(mut game) = queue.pop() {
@@ -251,6 +251,14 @@ fn solve(game: Game) -> Option<Game> {
             }
         }
         // Player's turn
+        if part2 {
+            // At the start of each player turn (before any other effects apply),
+            // you lose 1 hit point. If this brings you to or below 0 hit points, you lose.
+            game.damage_player(1);
+            if game.player_loses() {
+                continue;
+            }
+        }
         game.start_turn();
         if game.player_wins() {
             return Some(game);
@@ -271,11 +279,14 @@ fn solve(game: Game) -> Option<Game> {
 pub fn part1(boss: &Boss) -> u32 {
     let player = Player { hp: 50, mana: 500 };
     let game = Game::new(player, boss.clone());
-    let game = solve(game).expect("no solution found");
+    let game = solve(game, false).expect("no solution found");
     game.cost
 }
 
 #[aoc(day22, part2)]
-pub fn part2(boss: &Boss) -> i32 {
-    todo!()
+pub fn part2(boss: &Boss) -> u32 {
+    let player = Player { hp: 50, mana: 500 };
+    let game = Game::new(player, boss.clone());
+    let game = solve(game, true).expect("no solution found");
+    game.cost
 }
