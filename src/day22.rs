@@ -269,6 +269,12 @@ fn solve(game: Game, part2: bool) -> Option<Game> {
             }
             let mut game = game.clone();
             game.cast(spell);
+            // We don't yet evaluate the boss's turn here. Even if we can win (by poison damage),
+            // there may still be a different game state with a lower cost or a cheaper attack
+            // that can also defeat the boss.
+            // Instead, we push the game back onto the queue and evaluate the boss's turn when
+            // it pops back off the queue. Only at that point can we be *sure* that we've found
+            // the winning game with the lowest possible cost.
             queue.push(game);
         }
     }
