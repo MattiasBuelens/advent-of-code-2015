@@ -1,3 +1,4 @@
+use std::cmp::Reverse;
 use std::iter::once;
 use std::str::FromStr;
 
@@ -113,6 +114,11 @@ impl Player {
     fn attack(&self, other: &mut Player) {
         other.hp -= (self.damage - other.armor).max(1);
     }
+
+    fn equip(&mut self, item: Item) {
+        self.damage += item.damage;
+        self.armor += item.armor;
+    }
 }
 
 fn player_wins(mut player: Player, mut boss: Player) -> bool {
@@ -132,7 +138,13 @@ fn loadout_cost(loadout: &[Item]) -> u32 {
     loadout.iter().map(|item| item.cost).sum()
 }
 
-fn solve(player: Player, boss: &Player) -> Option<u32> {
+#[aoc(day21, part1)]
+pub fn part1(boss: &Player) -> u32 {
+    let player = Player {
+        hp: 100,
+        damage: 0,
+        armor: 0,
+    };
     // Try all possible loadouts, in incrementing total cost
     let mut loadouts = loadouts().collect::<Vec<_>>();
     loadouts.sort_unstable_by_key(|loadout| loadout_cost(loadout));
@@ -141,31 +153,39 @@ fn solve(player: Player, boss: &Player) -> Option<u32> {
         let mut player = player.clone();
         let cost = loadout_cost(&loadout);
         for item in loadout {
-            player.damage += item.damage;
-            player.armor += item.armor;
+            player.equip(item);
         }
         // See if we can win
         if player_wins(player, boss.clone()) {
-            return Some(cost);
+            return cost;
         }
     }
-    // Cannot win
-    None
+    panic!("cannot win")
 }
 
-#[aoc(day21, part1)]
-pub fn part1(boss: &Player) -> u32 {
+#[aoc(day21, part2)]
+pub fn part2(boss: &Player) -> u32 {
     let player = Player {
         hp: 100,
         damage: 0,
         armor: 0,
     };
-    solve(player, boss).unwrap()
-}
-
-#[aoc(day21, part2)]
-pub fn part2(boss: &Player) -> i32 {
-    todo!()
+    // Try all possible loadouts, in decrementing total cost
+    let mut loadouts = loadouts().collect::<Vec<_>>();
+    loadouts.sort_unstable_by_key(|loadout| Reverse(loadout_cost(loadout)));
+    for loadout in loadouts {
+        // Apply item buffs
+        let mut player = player.clone();
+        let cost = loadout_cost(&loadout);
+        for item in loadout {
+            player.equip(item);
+        }
+        // See if we can lose
+        if !player_wins(player, boss.clone()) {
+            return cost;
+        }
+    }
+    panic!("cannot lose")
 }
 
 #[cfg(test)]
