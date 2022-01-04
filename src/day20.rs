@@ -43,11 +43,14 @@ fn divisors(n: u32) -> impl Iterator<Item = u32> {
 #[aoc(day20, part2)]
 pub fn part2(&target_sum: &u32) -> u32 {
     for house in 1.. {
-        let sum = 11 * divisors(house).filter(|divisor| {
-            // Each Elf will stop after delivering presents to 50 houses.
-            // If there are more than 50 houses before this one, then this house gets nothing.
-            house / divisor <= 50
-        }).sum::<u32>();
+        let sum = divisors(house)
+            .filter(|divisor| {
+                // Each Elf will stop after delivering presents to 50 houses.
+                // If there are more than 50 houses before this one, then this house gets nothing.
+                house / divisor <= 50
+            })
+            .sum::<u32>()
+            * 11;
         if sum >= target_sum {
             return house;
         }
