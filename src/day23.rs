@@ -63,11 +63,11 @@ struct Computer {
 }
 
 impl Computer {
-    fn new(program: Vec<Instruction>) -> Self {
+    fn new(program: Vec<Instruction>, registers: [i32; 2]) -> Self {
         Self {
             program,
             pc: 0,
-            registers: [0; 2],
+            registers,
         }
     }
 
@@ -134,14 +134,16 @@ impl Computer {
 
 #[aoc(day23, part1)]
 pub fn part1(input: &[Instruction]) -> i32 {
-    let mut computer = Computer::new(input.to_vec());
+    let mut computer = Computer::new(input.to_vec(), [0, 0]);
     computer.run();
     *computer.register(Register::B)
 }
 
 #[aoc(day23, part2)]
 pub fn part2(input: &[Instruction]) -> i32 {
-    todo!()
+    let mut computer = Computer::new(input.to_vec(), [1, 0]);
+    computer.run();
+    *computer.register(Register::B)
 }
 
 #[cfg(test)]
@@ -162,7 +164,7 @@ inc a"
     #[test]
     fn test_part1() {
         let input = input_generator(&TEST_INPUT);
-        let mut computer = Computer::new(input);
+        let mut computer = Computer::new(input, [0; 2]);
         computer.run();
         assert_eq!(*computer.register(Register::A), 2);
     }
