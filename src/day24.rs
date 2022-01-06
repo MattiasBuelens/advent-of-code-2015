@@ -42,6 +42,10 @@ fn split_into_groups_of_sum(
         .filter(move |(group, _)| group.iter().sum::<i32>() == sum)
 }
 
+fn can_split_into_two_groups_of_sum(weights: &[i32], sum: i32) -> bool {
+    split_into_groups_of_sum(weights, sum).next().is_some()
+}
+
 fn quantum_entanglement(weights: &[i32]) -> i64 {
     weights.iter().map(|&x| x as i64).product::<i64>()
 }
@@ -54,8 +58,8 @@ pub fn part1(input: &[i32]) -> i64 {
             .filter(|(first_group, rest)| {
                 // First group must have correct sum
                 first_group.iter().sum::<i32>() == group_weight
-                // Must be able to split other weights into second and third group
-                && split_into_groups_of_sum(rest, group_weight).next().is_some()
+                // Must be able to split other weights into two groups with same sum
+                && can_split_into_two_groups_of_sum(rest, group_weight)
             })
             .min_by_key(|(first_group, _)| quantum_entanglement(first_group));
         if let Some((first_group, _)) = best {
@@ -65,9 +69,28 @@ pub fn part1(input: &[i32]) -> i64 {
     panic!("no solution found")
 }
 
+fn can_split_into_three_groups_of_sum(weights: &[i32], sum: i32) -> bool {
+    split_into_groups_of_sum(weights, sum)
+        .any(|(_, rest)| can_split_into_two_groups_of_sum(&rest, sum))
+}
+
 #[aoc(day24, part2)]
-pub fn part2(input: &[i32]) -> i32 {
-    todo!()
+pub fn part2(input: &[i32]) -> i64 {
+    let group_weight = input.iter().sum::<i32>() / 4;
+    for group_length in 1..=input.len() {
+        let best = split_into_groups_of_length(input, group_length)
+            .filter(|(first_group, rest)| {
+                // First group must have correct sum
+                first_group.iter().sum::<i32>() == group_weight
+                    // Must be able to split other weights into three groups with same sum
+                    && can_split_into_three_groups_of_sum(rest, group_weight)
+            })
+            .min_by_key(|(first_group, _)| quantum_entanglement(first_group));
+        if let Some((first_group, _)) = best {
+            return quantum_entanglement(&first_group);
+        }
+    }
+    panic!("no solution found")
 }
 
 #[cfg(test)]
@@ -102,5 +125,11 @@ mod tests {
     fn test_part1() {
         let input = (1..=5).chain(7..=11).collect::<Vec<i32>>();
         assert_eq!(part1(&input), 99);
+    }
+
+    #[test]
+    fn test_part2() {
+        let input = (1..=5).chain(7..=11).collect::<Vec<i32>>();
+        assert_eq!(part2(&input), 44);
     }
 }
