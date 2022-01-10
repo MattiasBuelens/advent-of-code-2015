@@ -49,7 +49,8 @@ fn build_molecule(replacements: &[(String, String)], molecule: String) -> Option
     let mut reduced_molecules = replacements
         .iter()
         .flat_map(|(input, output)| {
-            molecule.match_indices(output).map(|(i, m)| {
+            let molecule = &molecule;
+            molecule.match_indices(output).map(move |(i, m)| {
                 let mut input_molecule = molecule.clone();
                 input_molecule.replace_range(i..(i + m.len()), input);
                 input_molecule

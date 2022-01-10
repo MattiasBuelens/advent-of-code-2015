@@ -28,14 +28,13 @@ fn divisors(n: u32) -> impl Iterator<Item = u32> {
     let max = (n as f64).sqrt().floor() as u32;
     (1..=max)
         .flat_map(move |div| {
-            (if div * div == n {
+            IntoIterator::into_iter(if div * div == n {
                 [Some(div), None]
             } else if n % div == 0 {
                 [Some(div), Some(n / div)]
             } else {
                 [None, None]
             })
-            .into_iter()
         })
         .flatten()
 }

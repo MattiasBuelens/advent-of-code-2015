@@ -1,3 +1,3 @@
-pub use vector::*;
+pub use self::vector::*;
 
 mod vector;

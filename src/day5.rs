@@ -12,9 +12,7 @@ fn is_nice_part1(s: &str) -> bool {
         .zip(s.chars().skip(1))
         .any(|(left, right)| left == right);
     // It does not contain the strings ab, cd, pq, or xy
-    let forbidden = ["ab", "cd", "pq", "xy"]
-        .into_iter()
-        .any(|pat| s.contains(pat));
+    let forbidden = IntoIterator::into_iter(["ab", "cd", "pq", "xy"]).any(|pat| s.contains(pat));
     three_vowels && consecutive && !forbidden
 }
 

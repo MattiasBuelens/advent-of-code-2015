@@ -1,6 +1,10 @@
 extern crate aoc_runner;
 #[macro_use]
 extern crate aoc_runner_derive;
+extern crate itertools;
+extern crate json;
+extern crate lazy_static;
+extern crate regex;
 
 mod day1;
 mod day10;

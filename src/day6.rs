@@ -66,7 +66,7 @@ pub fn part1(input: &[Instruction]) -> usize {
         }
     }
     grid.into_iter()
-        .map(|row| row.into_iter().filter(|&x| x).count())
+        .map(|row| IntoIterator::into_iter(row).filter(|&x| x).count())
         .sum()
 }
 
@@ -86,6 +86,6 @@ pub fn part2(input: &[Instruction]) -> u32 {
         }
     }
     grid.into_iter()
-        .map(|row| row.into_iter().sum::<u32>())
+        .map(|row| IntoIterator::into_iter(row).sum::<u32>())
         .sum()
 }

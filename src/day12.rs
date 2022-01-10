@@ -1,4 +1,5 @@
 use json::JsonValue;
+use std::convert::TryInto;
 
 #[aoc_generator(day12)]
 pub fn parse_input(input: &str) -> JsonValue {

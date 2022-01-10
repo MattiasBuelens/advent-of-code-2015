@@ -1,3 +1,6 @@
+use std::convert::TryInto;
+use std::iter::FromIterator;
+
 type Password = [char; 8];
 
 #[aoc_generator(day11)]

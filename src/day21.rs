@@ -83,7 +83,7 @@ fn loadouts() -> impl Iterator<Item = Vec<Item>> {
             weapon
                 .into_iter()
                 .chain(armor)
-                .chain(rings.into_iter().flatten())
+                .chain(IntoIterator::into_iter(rings).flatten().into_iter())
                 .collect::<Vec<_>>()
         })
 }

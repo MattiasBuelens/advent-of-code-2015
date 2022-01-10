@@ -118,6 +118,8 @@ pub fn part2(input: &[Reindeer]) -> u32 {
 
 #[cfg(test)]
 mod tests {
+    use std::convert::TryInto;
+
     use lazy_static::*;
 
     use super::*;

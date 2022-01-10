@@ -54,7 +54,9 @@ fn split_into_groups_of_sum(
     sum: i32,
 ) -> impl Iterator<Item = (Vec<i32>, Vec<i32>)> + '_ {
     (1..=weights.len())
-        .flat_map(move |group_length| split_into_groups_of_sum_and_length(weights, sum, group_length))
+        .flat_map(move |group_length| {
+            split_into_groups_of_sum_and_length(weights, sum, group_length)
+        })
         .map(move |(group, rest)| {
             assert_eq!(group.iter().sum::<i32>(), sum);
             (group, rest)

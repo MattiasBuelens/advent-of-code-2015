@@ -188,17 +188,16 @@ impl Vector2D {
     }
 
     pub fn neighbours(self) -> impl Iterator<Item = Self> {
-        [
+        IntoIterator::into_iter([
             self + Vector2D::new(0, -1),
             self + Vector2D::new(-1, 0),
             self + Vector2D::new(1, 0),
             self + Vector2D::new(0, 1),
-        ]
-        .into_iter()
+        ])
     }
 
     pub fn neighbours_diagonal(self) -> impl Iterator<Item = Self> {
-        [
+        IntoIterator::into_iter([
             self + Vector2D::new(-1, -1),
             self + Vector2D::new(0, -1),
             self + Vector2D::new(1, -1),
@@ -207,8 +206,7 @@ impl Vector2D {
             self + Vector2D::new(-1, 1),
             self + Vector2D::new(0, 1),
             self + Vector2D::new(1, 1),
-        ]
-        .into_iter()
+        ])
     }
 }
 

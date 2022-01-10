@@ -2,7 +2,7 @@
 name = "advent-of-code-2015"
 version = "0.1.0"
 authors = ["Mattias Buelens <mattias@buelens.com>"]
-edition = "2021"
+edition = "2015"
 rust-version = "1.56"
 license = "MIT"
 readme = "README.md"

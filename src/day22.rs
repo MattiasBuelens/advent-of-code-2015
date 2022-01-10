@@ -70,7 +70,7 @@ impl Spell {
     }
 
     fn all() -> impl Iterator<Item = Spell> {
-        Self::ALL.into_iter()
+        IntoIterator::into_iter(Self::ALL)
     }
 }
 
