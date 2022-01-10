@@ -25,7 +25,7 @@ fn code_position(row: u32, column: u32) -> u32 {
 }
 
 #[aoc(day25, part1)]
-pub fn part1(&(row, column): &Input) -> u32 {
+pub fn part1(&(row, column): &Input) -> u64 {
     let position = code_position(row - 1, column - 1);
     let mut code = 20151125;
     for _ in 0..position {
